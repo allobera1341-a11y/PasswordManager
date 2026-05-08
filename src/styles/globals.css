@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 min-h-screen antialiased;
+    /* Patrón de cuadrícula ultra-sutil */
+    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+    background-size: 24px 24px;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer components {
+  .card-base {
+    @apply bg-white border border-slate-200 rounded p-0 overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.05)];
+  }
+
+  .card-header {
+    @apply px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center;
+  }
+
+  .card-body {
+    @apply p-6;
+  }
+  
+  .btn-primary {
+    @apply bg-slate-900 text-white font-bold py-2 px-5 rounded transition-all hover:bg-slate-800 active:bg-black text-[11px] uppercase tracking-widest shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply border border-slate-200 bg-white text-slate-600 font-bold py-2 px-5 rounded transition-all hover:bg-slate-50 text-[11px] uppercase tracking-widest;
+  }
+
+  .nav-link {
+    @apply text-[11px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest;
+  }
+
+  .label-tech {
+    @apply text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5;
+  }
+
+  .value-tech {
+    @apply text-[12px] font-bold text-slate-700 font-mono;
+  }
+}
+
+/* Scrollbar Technical */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-slate-50;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded hover:bg-slate-400;
+}

@@ -4,55 +4,76 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 min-h-screen antialiased;
-    /* Patrón de cuadrícula ultra-sutil */
-    background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-    background-size: 24px 24px;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: #0a0a0a;
+    @apply text-slate-300 min-h-screen antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Simple range slider */
+  input[type="range"] {
+    @apply accent-blue-600;
   }
 }
 
 @layer components {
+  /* ─── Minimalist Surface ─── */
   .card-base {
-    @apply bg-white border border-slate-200 rounded p-0 overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.05)];
+    @apply bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-300;
   }
 
   .card-header {
-    @apply px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center;
+    @apply px-8 py-5 flex justify-between items-center border-b border-white/[0.05] bg-white/[0.02];
   }
 
   .card-body {
-    @apply p-6;
+    @apply p-8;
   }
-  
+
+  /* ─── Clean Inputs ─── */
+  .surface-inset {
+    @apply bg-black border border-white/[0.05] rounded-xl;
+  }
+
+  .metric-block {
+    @apply bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 transition-colors;
+  }
+
+  .metric-block:hover {
+    @apply border-white/[0.1] bg-white/[0.05];
+  }
+
+  /* ─── Professional Buttons ─── */
   .btn-primary {
-    @apply bg-slate-900 text-white font-bold py-2 px-5 rounded transition-all hover:bg-slate-800 active:bg-black text-[11px] uppercase tracking-widest shadow-sm;
+    @apply bg-white text-black font-semibold py-3 px-6 rounded-xl transition-all text-[14px] flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-[0.98];
   }
 
   .btn-secondary {
-    @apply border border-slate-200 bg-white text-slate-600 font-bold py-2 px-5 rounded transition-all hover:bg-slate-50 text-[11px] uppercase tracking-widest;
+    @apply bg-white/[0.05] border border-white/[0.1] text-white font-medium py-3 px-6 rounded-xl transition-all text-[14px] flex items-center justify-center gap-2 hover:bg-white/[0.1] active:scale-[0.98];
   }
 
-  .nav-link {
-    @apply text-[11px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest;
+  /* ─── Typography ─── */
+  .label-section {
+    @apply text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-2;
   }
 
   .label-tech {
-    @apply text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5;
+    @apply text-[11px] font-medium text-slate-600 uppercase tracking-tight mb-2 block;
   }
 
-  .value-tech {
-    @apply text-[12px] font-bold text-slate-700 font-mono;
+  /* ─── Clean Scrollbar ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20;
   }
 }
 
-/* Scrollbar Technical */
-::-webkit-scrollbar {
-  width: 4px;
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.4; }
 }
-::-webkit-scrollbar-track {
-  @apply bg-slate-50;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded hover:bg-slate-400;
+
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
 }

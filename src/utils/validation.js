@@ -1,13 +1,21 @@
 /**
  * AI Secure Password Manager - Validation Utility
- * Basic sanitization and input validation for professional hardening.
+ * Professional-grade sanitization and input validation.
  */
 
 export const validatePasswordConfig = (config) => {
   const errors = [];
 
-  if (config.length < 4 || config.length > 64) {
-    errors.push("Length must be between 4 and 64.");
+  if (typeof config.length !== 'number' || config.length < 8 || config.length > 128) {
+    errors.push("Longitud inválida: debe estar entre 8 y 128 caracteres.");
+  }
+
+  const hasLower = /[a-z]/.test(config.characters || '');
+  const hasUpper = /[A-Z]/.test(config.characters || '');
+  
+  // Basic sanity checks for custom generation
+  if (config.customPool && config.customPool.length === 0) {
+    errors.push("El pool personalizado no puede estar vacío.");
   }
 
   return {
@@ -16,7 +24,31 @@ export const validatePasswordConfig = (config) => {
   };
 };
 
-export const sanitizeString = (str) => {
-  if (typeof str !== 'string') return '';
-  return str.replace(/[<>]/g, ''); // Simple XSS prevention for labels/names
+/**
+ * Sanitize strings to prevent XSS in audit logs or UI labels.
+ */
+export const sanitizeInput = (input) => {
+  if (typeof input !== 'string') return '';
+  return input
+    .trim()
+    .replace(/[&<>"']/g, (m) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[m]));
+};
+
+/**
+ * Validate vault entry structure before encryption/sync.
+ */
+export const validateVaultEntry = (entry) => {
+  const schema = ['id', 'label', 'score', 'createdAt'];
+  const missing = schema.filter(key => !entry.hasOwnProperty(key));
+  
+  return {
+    isValid: missing.length === 0,
+    missingFields: missing
+  };
 };

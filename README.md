@@ -1,46 +1,54 @@
-# AI Secure Password Manager - FASE 1 🔐
+# AI Secure Password Manager 🔐
+**Dashboard de Ciberseguridad Profesional y Analizador de Entropía Local**
 
-Este proyecto es la base profesional para un gestor de contraseñas inteligente con enfoque en ciberseguridad. En esta fase, se ha establecido la arquitectura base y la interfaz de usuario moderna.
+Un gestor de credenciales de alto rendimiento con arquitectura de "conocimiento cero" (zero-knowledge), diseñado para la generación de contraseñas de grado militar y análisis de seguridad inteligente mediante IA. Desarrollado para la excelencia académica y fiabilidad técnica.
 
-## 🛠️ Stack Tecnológico
-- **React**: Biblioteca principal para la interfaz.
-- **Vite**: Herramienta de construcción ultrarrápida.
-- **Tailwind CSS**: Framework de estilos para un diseño moderno y responsive.
-- **Lucide React**: Iconografía premium de ciberseguridad.
-- **Framer Motion**: Animaciones fluidas y transiciones.
+> [!IMPORTANT]
+> **Requisito de Sistema:** Este proyecto requiere **Node.js v18.0.0** o superior. Si usas una versión anterior, el servidor de desarrollo no arrancará.
 
-## 📂 Estructura del Proyecto
-```text
-src/
- ├── components/      # Componentes modulares (Navbar, Hero, Cards)
- ├── layouts/         # Layouts de página (MainLayout)
- ├── styles/          # Estilos globales y configuración de Tailwind
- ├── assets/          # Recursos estáticos
- ├── App.jsx          # Componente raíz
- └── main.jsx         # Punto de entrada de React
+## 🛠 Stack Tecnológico
+- **Frontend:** React 18 + Vite
+- **Estilo:** Tailwind CSS (Interfaz Profesional Minimalista)
+- **Base de Datos:** Firebase Realtime Database (RTDB)
+- **Seguridad:** Web Crypto API (AES-256-GCM)
+- **Inteligencia:** Integración con OpenAI / Gemini para análisis de seguridad
+
+## 🚀 Inicio Rápido (Guía para Profesores)
+
+Sigue estos pasos para levantar el proyecto en menos de 2 minutos:
+
+### 1. Preparar el entorno
+Si tienes instalado `nvm`, asegúrate de usar una versión moderna de Node:
+```bash
+nvm use 20 || nvm install 20
 ```
 
-## 🎨 Diseño Visual
-- **Dashboard de Ciberseguridad**: Estética oscura profesional.
-- **Glassmorphism**: Efectos de cristal esmerilado en navegación y paneles.
-- **Paleta de Colores**: Fondo `#0a0e17` con acentos en Azul, Cyan y Verde Esmeralda.
-- **Responsive Design**: Adaptado para Desktop, Tablet y Móvil.
+### 2. Instalación
+```bash
+npm install
+```
 
-## 🚀 Instalación
-Para ejecutar el proyecto en local:
+### 3. Configuración de Variables
+Copia el archivo de ejemplo y rellena tus credenciales (Firebase es necesario para el historial):
+```bash
+cp .env.example .env
+```
 
-1. Asegúrate de tener Node.js instalado.
-2. Instala las dependencias:
-   ```bash
-   npm install
-   ```
-3. Inicia el servidor de desarrollo:
-   ```bash
-   npm run dev
-   ```
+### 4. Ejecución
+```bash
+npm run dev
+```
+La aplicación estará disponible en `http://localhost:5173`.
 
-## 📝 Próximas Fases
-- **Fase 2**: Implementación de generación criptográfica local segura.
-- **Fase 3**: Análisis de seguridad local y detección de patrones.
-- **Fase 4**: Cifrado AES-GCM y persistencia en Firebase.
-- **Fase 5**: Integración de IA para recomendaciones de seguridad.
+## 🛡 Arquitectura de Seguridad
+- **Zero-Knowledge:** Las cadenas de texto sensibles nunca se transmiten en texto plano. Todo el cifrado ocurre localmente en el cliente.
+- **Análisis Local:** Los cálculos de entropía y detección de patrones se realizan mediante JavaScript en un entorno aislado.
+- **Privacidad Primero:** La IA solo recibe metadatos abstractos para dar consejos, nunca las contraseñas reales.
+
+## 📊 Características Principales
+- **Generación Inteligente:** Pools de entropía con modos: Standard, High y Maximum.
+- **Auditoría en Tiempo Real:** Sincronización en vivo con Firebase y analíticas de sesión.
+- **AI Insights:** Recomendaciones proactivas basadas en métricas criptográficas.
+- **Modo Presentación:** Incluye un "Demo Controller" para cargar datos simulados rápidamente durante la exposición.
+
+---

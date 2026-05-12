@@ -1,14 +1,14 @@
 import { Shield, Lock, Activity } from 'lucide-react'
+import SecurityStatus from './SecurityStatus'
 
 const Hero = () => {
   return (
     <section className="pt-32 pb-20 bg-[#0a0a0a]">
       <div className="container mx-auto px-8">
         <div className="max-w-3xl">
-          {/* Simple Badge */}
-          <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 bg-blue-500/10 rounded-full border border-blue-500/20 text-blue-400 text-[11px] font-bold tracking-tight">
-            <Shield size={12} strokeWidth={2.5} />
-            <span>Phase 5 Production Ready</span>
+          {/* Real-time Security Status Badges */}
+          <div className="mb-6">
+            <SecurityStatus />
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">

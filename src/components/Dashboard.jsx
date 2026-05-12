@@ -10,7 +10,7 @@ import DemoMode from './DemoMode'
 const Dashboard = ({ 
   password, analysis, history, onGenerate, 
   isSaving, isAILoading, aiInsights,
-  config, setConfig, onPopulateDemo
+  config, setConfig, onPopulateDemo, isGuest
 }) => {
   return (
     <section className="container mx-auto px-8 pb-32">
@@ -64,7 +64,7 @@ const Dashboard = ({
           <div className="lg:col-span-4">
             <div className="sticky top-24 space-y-6">
               <h3 className="label-section">Audit & Verification</h3>
-              <HistoryPanel history={history} />
+              <HistoryPanel history={history} isGuest={isGuest} />
             </div>
           </div>
 

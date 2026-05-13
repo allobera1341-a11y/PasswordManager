@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { WifiOff, AlertTriangle } from 'lucide-react';
+import { WifiOff } from 'lucide-react';
 
 const OfflineWarning = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -17,15 +17,20 @@ const OfflineWarning = () => {
   if (isOnline) return null;
 
   return (
-    <div className="fixed bottom-28 right-8 z-[110] animate-bounce">
-      <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-red-500/10 border border-red-500/30 backdrop-blur-xl shadow-2xl">
-        <div className="relative">
-          <WifiOff size={18} className="text-red-500" />
-          <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-[12px] font-bold text-red-200">Offline Mode</span>
-          <span className="text-[10px] text-red-400/80 font-medium leading-none mt-0.5">Cloud sync suspended</span>
+    <div className="fixed bottom-24 right-6 z-[110]">
+      <div
+        className="flex items-center gap-3 px-4 py-3 rounded-xl"
+        style={{
+          background: 'var(--surface)',
+          border: '1px solid #ffc9c9',
+          borderLeft: '3px solid var(--danger)',
+          boxShadow: 'var(--shadow-md)',
+        }}
+      >
+        <WifiOff size={16} style={{ color: 'var(--danger)', flexShrink: 0 }} />
+        <div>
+          <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Sin conexión</p>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Sincronización en pausa</p>
         </div>
       </div>
     </div>

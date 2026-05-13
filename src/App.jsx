@@ -49,15 +49,15 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // Load history - Scoped if logged in, empty otherwise
+  // Cargar historial — solo si el usuario está autenticado
   useEffect(() => {
     if (!db || !user) {
       setHistory([]);
       return;
     }
-    
+
     const historyRef = query(ref(db, `users/${user.uid}/passwords`), limitToLast(20));
-    
+
     const unsubscribe = onValue(historyRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -84,11 +84,11 @@ function App() {
 
     const newPass = generateSecurePassword(config);
     const newAnalysis = analyzePassword(newPass);
-    
+
     setCurrentPassword(newPass);
     setAnalysis(newAnalysis);
-    
-    // Only save to DB if user is authenticated
+
+    // Solo guardar en la base de datos si el usuario está autenticado
     if (user && db) {
       setIsSaving(true);
       try {
@@ -102,10 +102,10 @@ function App() {
           analysisDetails: newAnalysis.metrics,
           createdAt: serverTimestamp()
         });
-        setToast({ message: 'Sync Successful', type: 'success' });
+        setToast({ message: 'Contraseña guardada en la nube', type: 'success' });
       } catch (error) {
-        console.error("Storage Error:", error.message);
-        setToast({ message: 'Sync Failed. Data not persisted.', type: 'error' });
+        console.error("Error al guardar:", error.message);
+        setToast({ message: 'Error al sincronizar. Los datos no se han guardado.', type: 'error' });
       } finally {
         setIsSaving(false);
       }
@@ -123,17 +123,25 @@ function App() {
       });
       setAiInsights(insights);
     } catch (error) {
-      console.error("AI Insight Error:", error.message);
+      console.error("Error IA:", error.message);
     } finally {
       setIsAILoading(false);
     }
   }, [config, user]);
 
   const handlePopulateDemo = async () => {
-    if (!user) return;
-    setToast({ message: 'Initializing Demo Sequence...', type: 'success' });
+    if (!user) {
+      setToast({ message: 'Inicia sesión para usar el modo demo', type: 'error' });
+      return;
+    }
+    setToast({ message: 'Inicializando datos de demostración...', type: 'success' });
     try {
-      const demoData = [{ score: 9.8, level: 'STRONG', length: 32 }, { score: 4.2, level: 'MEDIUM', length: 12 }, { score: 8.5, level: 'STRONG', length: 24 }, { score: 2.1, level: 'WEAK', length: 8 }];
+      const demoData = [
+        { score: 9.8, level: 'STRONG', length: 32 },
+        { score: 4.2, level: 'MEDIUM', length: 12 },
+        { score: 8.5, level: 'STRONG', length: 24 },
+        { score: 2.1, level: 'WEAK', length: 8 }
+      ];
       for (const item of demoData) {
         const p = generateSecurePassword({ length: item.length });
         await push(ref(db, `users/${user.uid}/passwords`), {
@@ -144,33 +152,20 @@ function App() {
           createdAt: serverTimestamp()
         });
       }
-      setToast({ message: 'Demo Matrix Populated', type: 'success' });
+      setToast({ message: 'Datos de demo cargados correctamente', type: 'success' });
     } catch (err) {
-      setToast({ message: 'Population failed.', type: 'error' });
+      setToast({ message: 'Error al cargar los datos de demo.', type: 'error' });
     }
   };
 
+  // Pantalla de carga inicial mientras se verifica la sesión
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center">
-        <div className="w-10 h-10 border-2 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mb-4" />
-        <p className="text-[9px] font-bold text-slate-600 uppercase tracking-[0.3em]">Establishing Secure Link</p>
-      </div>
-    )
-  }
-
-  // Mandatory Login View — shown when no user is authenticated
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#030303]">
-        <Login isOpen={true} onClose={() => {}} />
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: 'var(--border)', borderTopColor: 'var(--accent)' }} />
+          <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>Verificando sesión...</p>
+        </div>
       </div>
     )
   }
@@ -178,9 +173,9 @@ function App() {
   return (
     <MainLayout user={user} onLoginClick={() => setIsLoginOpen(true)}>
       <Hero />
-      <Dashboard 
-        password={currentPassword} 
-        analysis={analysis} 
+      <Dashboard
+        password={currentPassword}
+        analysis={analysis}
         history={history}
         onGenerate={handleGenerate}
         isSaving={isSaving}
@@ -189,17 +184,22 @@ function App() {
         config={config}
         setConfig={setConfig}
         onPopulateDemo={handlePopulateDemo}
-        isGuest={false}
+        isGuest={!user}
       />
-      
+
       <AIChatbot />
       <OfflineWarning />
 
+      {/* Modal de login — opcional, no bloquea el dashboard */}
+      {isLoginOpen && (
+        <Login isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+      )}
+
       {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
       )}
     </MainLayout>

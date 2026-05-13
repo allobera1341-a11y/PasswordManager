@@ -7,40 +7,53 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("Critical Render Error:", error, errorInfo);
+    console.error('Error de renderizado:', error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-8 text-center">
-          <div className="max-w-md space-y-6">
-            <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 mx-auto">
-              <ShieldAlert size={32} className="text-red-500" />
-            </div>
-            <h2 className="text-2xl font-bold text-white">System Interrupted</h2>
-            <p className="text-slate-500 text-sm leading-relaxed">
-              A critical error occurred while rendering the vault interface. 
-              This may be due to a network interruption or invalid database state.
-            </p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="flex items-center gap-2 px-6 py-3 bg-white text-black font-bold rounded-xl mx-auto hover:bg-slate-200 transition-all"
+        <div
+          className="min-h-screen flex items-center justify-center p-8 text-center"
+          style={{ background: 'var(--bg)' }}
+        >
+          <div className="max-w-sm space-y-5">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto"
+              style={{
+                background: 'var(--danger-light)',
+                border: '1px solid #ffc9c9',
+                color: 'var(--danger)',
+              }}
             >
-              <RefreshCw size={16} />
-              Reinitialize Vault
+              <ShieldAlert size={26} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+                Error del sistema
+              </h2>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                Ha ocurrido un error inesperado al cargar la aplicación. Esto puede deberse a una interrupción de red o un estado inválido.
+              </p>
+            </div>
+            <button
+              onClick={() => window.location.reload()}
+              className="btn-primary mx-auto"
+            >
+              <RefreshCw size={15} />
+              Recargar aplicación
             </button>
           </div>
         </div>
       );
     }
 
-    return this.props.children; 
+    return this.props.children;
   }
 }
 

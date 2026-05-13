@@ -10,9 +10,6 @@ export const validatePasswordConfig = (config) => {
     errors.push("Longitud inválida: debe estar entre 8 y 128 caracteres.");
   }
 
-  const hasLower = /[a-z]/.test(config.characters || '');
-  const hasUpper = /[A-Z]/.test(config.characters || '');
-  
   // Basic sanity checks for custom generation
   if (config.customPool && config.customPool.length === 0) {
     errors.push("El pool personalizado no puede estar vacío.");
@@ -45,7 +42,7 @@ export const sanitizeInput = (input) => {
  */
 export const validateVaultEntry = (entry) => {
   const schema = ['id', 'label', 'score', 'createdAt'];
-  const missing = schema.filter(key => !entry.hasOwnProperty(key));
+  const missing = schema.filter(key => Object.prototype.hasOwnProperty.call(entry, key) === false);
   
   return {
     isValid: missing.length === 0,

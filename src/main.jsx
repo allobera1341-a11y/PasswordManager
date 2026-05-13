@@ -11,7 +11,7 @@ const auditResults = runSecurityAudit();
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App audit={auditResults} />
+      <App />
     </ErrorBoundary>
   </React.StrictMode>,
 )

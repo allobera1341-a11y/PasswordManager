@@ -13,7 +13,7 @@ export const exportEncryptedHistory = (history) => {
         encryptedPassword: item.encryptedPassword, // Passwords remain encrypted
         score: item.securityScore,
         level: item.securityLevel,
-        createdAt: item.createdAt?.toDate ? item.createdAt.toDate().toISOString() : item.createdAt
+        createdAt: item.createdAt ? new Date(item.createdAt).toISOString() : null
       }))
     };
 

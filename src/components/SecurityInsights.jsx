@@ -3,10 +3,12 @@ import { Brain, ShieldAlert, CheckCircle2, Lightbulb } from 'lucide-react'
 const SecurityInsights = ({ insights, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="card-base p-8 animate-pulse">
-        <div className="h-4 w-48 bg-white/5 rounded mb-4" />
-        <div className="h-3 w-full bg-white/5 rounded mb-2" />
-        <div className="h-3 w-5/6 bg-white/5 rounded" />
+      <div className="card-base" style={{ opacity: 0.7 }}>
+        <div className="card-body space-y-3 animate-pulse">
+          <div className="h-4 w-40 rounded" style={{ background: 'var(--surface-3)' }} />
+          <div className="h-3 w-full rounded" style={{ background: 'var(--surface-3)' }} />
+          <div className="h-3 w-5/6 rounded" style={{ background: 'var(--surface-3)' }} />
+        </div>
       </div>
     )
   }
@@ -14,58 +16,69 @@ const SecurityInsights = ({ insights, isLoading }) => {
   if (!insights) return null;
 
   return (
-    <div className="card-base border-blue-500/10">
+    <div className="card-base">
       <div className="card-header">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-            <Brain size={16} className="text-blue-500" />
+        <div className="flex items-center gap-2.5">
+          <div className="icon-box" style={{ background: 'var(--accent-light)', borderColor: '#bfdbfe', color: 'var(--accent)' }}>
+            <Brain size={13} />
           </div>
-          <h2 className="text-[14px] font-bold text-white tracking-tight">Intelligence Assistant</h2>
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Asistente de inteligencia</h2>
         </div>
-        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2 py-1 bg-white/[0.05] rounded border border-white/[0.05]">
-          AI Analysis
+        <span
+          className="text-xs font-semibold px-2 py-1 rounded-md"
+          style={{ background: 'var(--surface-3)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+        >
+          Análisis IA
         </span>
       </div>
 
-      <div className="card-body">
-        <div className="space-y-8">
-          <div className="flex items-start gap-4 p-5 rounded-xl bg-white/[0.02] border border-white/5">
-            <Lightbulb size={18} className="text-blue-500 mt-0.5 flex-shrink-0" />
-            <p className="text-[14px] text-slate-300 leading-relaxed">
-              {insights.explanation}
-            </p>
+      <div className="card-body space-y-6">
+        {/* Explicación */}
+        <div
+          className="flex items-start gap-3 p-4 rounded-lg"
+          style={{
+            background: 'var(--accent-light)',
+            border: '1px solid #bfdbfe',
+            borderLeft: '3px solid var(--accent)',
+          }}
+        >
+          <Lightbulb size={16} style={{ color: 'var(--accent)', marginTop: '1px', flexShrink: 0 }} />
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+            {insights.explanation}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Recomendaciones */}
+          <div>
+            <h3 className="label-section flex items-center gap-1.5">
+              <ShieldAlert size={11} />
+              Recomendaciones clave
+            </h3>
+            <ul className="space-y-2">
+              {insights.recommendations.map((tip, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: 'var(--accent)' }} />
+                  {tip}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div className="space-y-4">
-              <h3 className="label-section flex items-center gap-2">
-                <ShieldAlert size={12} />
-                Critical Advice
-              </h3>
-              <ul className="space-y-3">
-                {insights.recommendations.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-3 text-[13px] text-slate-400">
-                    <span className="w-1 h-1 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="label-section flex items-center gap-2">
-                <CheckCircle2 size={12} />
-                Global Standards
-              </h3>
-              <ul className="space-y-3">
-                {insights.bestPractices.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-3 text-[13px] text-slate-500">
-                    <span className="w-1 h-1 rounded-full bg-slate-700 mt-2 flex-shrink-0" />
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {/* Buenas prácticas */}
+          <div>
+            <h3 className="label-section flex items-center gap-1.5">
+              <CheckCircle2 size={11} />
+              Estándares globales
+            </h3>
+            <ul className="space-y-2">
+              {insights.bestPractices.map((tip, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--text-muted)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: 'var(--border-strong)' }} />
+                  {tip}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

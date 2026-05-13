@@ -33,8 +33,9 @@ export const getAIRecommendations = async (metrics) => {
 
   try {
     const isOpenAI = apiKey.startsWith('sk-');
+    const baseUrl = import.meta.env.VITE_AI_API_URL || 'https://api.openai.com';
     const endpoint = isOpenAI 
-      ? 'https://api.openai.com/v1/chat/completions'
+      ? `${baseUrl}/v1/chat/completions`
       : `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const prompt = `
@@ -54,7 +55,7 @@ export const getAIRecommendations = async (metrics) => {
       body: JSON.stringify(
         isOpenAI 
           ? {
-              model: "gpt-3.5-turbo",
+              model: "gpt-4o-mini",
               messages: [{ role: "user", content: prompt }],
               response_format: { type: "json_object" }
             }
@@ -74,10 +75,18 @@ export const askCyberAI = async (message, chatHistory = []) => {
   const apiKey = import.meta.env.VITE_AI_API_KEY;
   const userMsg = message.toLowerCase();
 
+  // Guard: if no API key, go straight to smart fallback
+  if (!apiKey || apiKey.includes('YOUR_')) {
+    const match = SMART_MOCKS.find(m => m.keywords.some(k => userMsg.includes(k)));
+    if (match) return match.response;
+    return "I am operating in secure local mode. I can assist you with technical details about AES-256, Entropy calculations, or our Zero-Knowledge architecture. What would you like to know?";
+  }
+
   try {
     const isOpenAI = apiKey.startsWith('sk-');
+    const baseUrl = import.meta.env.VITE_AI_API_URL || 'https://api.openai.com';
     const endpoint = isOpenAI 
-      ? 'https://api.openai.com/v1/chat/completions'
+      ? `${baseUrl}/v1/chat/completions`
       : `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(endpoint, {
@@ -86,15 +95,24 @@ export const askCyberAI = async (message, chatHistory = []) => {
         'Content-Type': 'application/json',
         ...(isOpenAI && { 'Authorization': `Bearer ${apiKey}` })
       },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "system", content: "Expert Cybersecurity Assistant" }, { role: "user", content: message }]
-      })
+      body: JSON.stringify(
+        isOpenAI
+          ? {
+              model: "gpt-4o-mini",
+              messages: [
+                { role: "system", content: "You are an expert Cybersecurity Assistant." },
+                { role: "user", content: message }
+              ]
+            }
+          : { contents: [{ parts: [{ text: message }] }] }
+      )
     });
 
-    if (!response.ok) throw new Error('CORS');
+    if (!response.ok) throw new Error('API Error');
     const data = await response.json();
-    return data.choices[0].message.content;
+    return isOpenAI
+      ? data.choices[0].message.content
+      : data.candidates[0].content.parts[0].text;
 
   } catch (error) {
     // Smart Fallback for Demo Presentation

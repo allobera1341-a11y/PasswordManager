@@ -1,36 +1,46 @@
 const LoadingSkeleton = ({ type = 'card' }) => {
+  const bar = (w) => (
+    <div
+      className="rounded"
+      style={{ height: '12px', width: w, background: 'var(--surface-3)' }}
+    />
+  );
+
   if (type === 'insights') {
     return (
-      <div className="card-base p-8 animate-pulse border-white/5 bg-white/[0.02]">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-8 h-8 rounded-lg bg-white/5" />
-          <div className="h-4 w-32 bg-white/5 rounded" />
-        </div>
-        <div className="space-y-4">
-          <div className="h-3 w-full bg-white/5 rounded" />
-          <div className="h-3 w-5/6 bg-white/5 rounded" />
-          <div className="h-3 w-4/6 bg-white/5 rounded" />
-        </div>
-        <div className="grid grid-cols-2 gap-4 mt-8">
-          <div className="h-12 rounded-xl bg-white/5" />
-          <div className="h-12 rounded-xl bg-white/5" />
+      <div className="card-base animate-pulse">
+        <div className="card-body space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg" style={{ background: 'var(--surface-3)' }} />
+            {bar('130px')}
+          </div>
+          <div className="space-y-2">
+            {bar('100%')}
+            {bar('83%')}
+            {bar('66%')}
+          </div>
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="h-10 rounded-lg" style={{ background: 'var(--surface-3)' }} />
+            <div className="h-10 rounded-lg" style={{ background: 'var(--surface-3)' }} />
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="card-base p-8 animate-pulse border-white/5 bg-white/[0.02]">
-      <div className="flex justify-between mb-8">
-        <div className="h-4 w-40 bg-white/5 rounded" />
-        <div className="h-4 w-20 bg-white/5 rounded" />
-      </div>
-      <div className="h-20 w-full bg-white/5 rounded-xl mb-8" />
-      <div className="grid grid-cols-4 gap-4">
-        <div className="h-10 bg-white/5 rounded" />
-        <div className="h-10 bg-white/5 rounded" />
-        <div className="h-10 bg-white/5 rounded" />
-        <div className="h-10 bg-white/5 rounded" />
+    <div className="card-base animate-pulse">
+      <div className="card-body space-y-4">
+        <div className="flex justify-between">
+          {bar('160px')}
+          {bar('80px')}
+        </div>
+        <div className="h-16 rounded-lg" style={{ background: 'var(--surface-3)' }} />
+        <div className="grid grid-cols-4 gap-3">
+          {[0,1,2,3].map(i => (
+            <div key={i} className="h-9 rounded-lg" style={{ background: 'var(--surface-3)' }} />
+          ))}
+        </div>
       </div>
     </div>
   )

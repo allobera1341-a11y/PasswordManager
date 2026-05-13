@@ -1,12 +1,21 @@
-import { Settings, Shield, Zap, Lock } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { SECURITY_MODES } from '../utils/passwordGenerator'
 
+const modeLabels = {
+  STANDARD: 'Estándar',
+  HIGH: 'Alta',
+  MAXIMUM: 'Máxima',
+};
+
+const toggleOptions = [
+  { id: 'useNumbers', label: 'Números' },
+  { id: 'useSymbols', label: 'Símbolos' },
+  { id: 'useUpper', label: 'Mayúsculas' },
+  { id: 'excludeAmbiguous', label: 'Sin ambiguos' },
+];
+
 const PasswordOptions = ({ config, setConfig }) => {
-  const modes = [
-    { id: 'STANDARD', label: 'Standard' },
-    { id: 'HIGH', label: 'High' },
-    { id: 'MAXIMUM', label: 'Max' },
-  ];
+  const modes = ['STANDARD', 'HIGH', 'MAXIMUM'];
 
   const updateConfig = (key, value) => {
     setConfig(prev => ({ ...prev, [key]: value }));
@@ -20,80 +29,92 @@ const PasswordOptions = ({ config, setConfig }) => {
       useNumbers: mode.numbers,
       useSymbols: mode.symbols,
       useUpper: true,
-      excludeAmbiguous: config.excludeAmbiguous
+      excludeAmbiguous: config.excludeAmbiguous,
     });
   };
 
   return (
     <div className="card-base">
       <div className="card-header">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center border border-white/10">
-            <Settings size={14} className="text-slate-400" />
+        <div className="flex items-center gap-2.5">
+          <div className="icon-box">
+            <Settings size={13} />
           </div>
-          <h2 className="text-[14px] font-bold text-white tracking-tight">Configuration</h2>
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Configuración</h2>
         </div>
       </div>
 
-      <div className="card-body space-y-8">
-        
-        {/* Simple Mode Toggle */}
-        <div className="space-y-3">
-          <label className="label-section text-[10px]">Security Preset</label>
-          <div className="grid grid-cols-3 gap-2">
-            {modes.map((m) => (
+      <div className="card-body space-y-6">
+
+        {/* Presets de seguridad */}
+        <div>
+          <label className="label-section">Nivel de seguridad</label>
+          <div
+            className="grid grid-cols-3 gap-1 p-1 rounded-lg"
+            style={{ background: 'var(--surface-3)', border: '1px solid var(--border)' }}
+          >
+            {modes.map((modeId) => (
               <button
-                key={m.id}
-                onClick={() => applyMode(m.id)}
-                className={`py-2 px-3 rounded-lg text-[12px] font-bold border transition-all ${
-                  config.mode === m.id 
-                    ? 'bg-blue-600 border-blue-500 text-white' 
-                    : 'bg-white/[0.02] border-white/5 text-slate-500 hover:border-white/10'
-                }`}
+                key={modeId}
+                onClick={() => applyMode(modeId)}
+                className="py-1.5 px-2 rounded-md text-xs font-semibold transition-all"
+                style={{
+                  background: config.mode === modeId ? 'var(--surface)' : 'transparent',
+                  color: config.mode === modeId ? 'var(--accent)' : 'var(--text-muted)',
+                  boxShadow: config.mode === modeId ? 'var(--shadow-sm)' : 'none',
+                  border: config.mode === modeId ? '1px solid var(--border)' : '1px solid transparent',
+                }}
               >
-                {m.label}
+                {modeLabels[modeId]}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Sliders */}
-        <div className="space-y-4 pt-4 border-t border-white/[0.05]">
-          <div className="flex justify-between items-center mb-1">
-            <label className="label-section text-[10px]">Length</label>
-            <span className="text-[13px] font-bold text-white">{config.length}</span>
+        {/* Slider de longitud */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+          <div className="flex justify-between items-center mb-3">
+            <label className="label-section mb-0">Longitud</label>
+            <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{config.length}</span>
           </div>
-          <input 
-            type="range" 
-            min="8" 
-            max="64" 
+          <input
+            type="range"
+            min="8"
+            max="64"
             value={config.length}
             onChange={(e) => updateConfig('length', parseInt(e.target.value))}
-            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+            style={{ background: 'var(--border)' }}
           />
+          <div className="flex justify-between mt-1">
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>8</span>
+            <span className="text-xs" style={{ color: 'var(--text-muted)' }}>64</span>
+          </div>
         </div>
 
-        {/* Toggles Grid */}
-        <div className="grid grid-cols-2 gap-2 pt-4 border-t border-white/[0.05]">
-          {[
-            { id: 'useNumbers', label: 'Numbers' },
-            { id: 'useSymbols', label: 'Symbols' },
-            { id: 'useUpper', label: 'Uppercase' },
-            { id: 'excludeAmbiguous', label: 'Simple Chars' },
-          ].map((opt) => (
-            <button
-              key={opt.id}
-              onClick={() => updateConfig(opt.id, !config[opt.id])}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
-                config[opt.id] 
-                  ? 'bg-white/[0.03] border-white/10 text-white' 
-                  : 'bg-transparent border-white/5 text-slate-600'
-              }`}
-            >
-              <span className="text-[12px] font-medium">{opt.label}</span>
-              <div className={`w-2 h-2 rounded-full ${config[opt.id] ? 'bg-blue-500' : 'bg-slate-800'}`} />
-            </button>
-          ))}
+        {/* Toggles */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+          <label className="label-section">Opciones</label>
+          <div className="grid grid-cols-2 gap-2">
+            {toggleOptions.map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => updateConfig(opt.id, !config[opt.id])}
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left"
+                style={{
+                  background: config[opt.id] ? 'var(--accent-light)' : 'var(--surface-3)',
+                  border: `1px solid ${config[opt.id] ? '#bfdbfe' : 'var(--border)'}`,
+                  color: config[opt.id] ? 'var(--accent)' : 'var(--text-secondary)',
+                }}
+              >
+                <span>{opt.label}</span>
+                <span
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ background: config[opt.id] ? 'var(--accent)' : 'var(--border-strong)' }}
+                />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

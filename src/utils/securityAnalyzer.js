@@ -20,7 +20,7 @@ export const analyzePassword = (password) => {
   if (hasNumber) poolSize += 10;
   if (hasSymbol) poolSize += 32;
   
-  const entropy = Math.floor(length * Math.log2(poolSize));
+  const entropy = Math.floor(length * Math.log2(Math.max(poolSize, 1)));
 
   // Check for patterns
   const hasRepeated = /(.)\1{2,}/.test(password); // 3+ identical chars

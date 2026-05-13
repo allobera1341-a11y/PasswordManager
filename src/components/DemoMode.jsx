@@ -1,27 +1,36 @@
-import { Database, Zap } from 'lucide-react'
+import { Database } from 'lucide-react'
 
-const DemoMode = ({ onPopulate }) => {
+const DemoMode = ({ onPopulate, isGuest }) => {
   return (
-    <div className="card-base border-blue-500/10 bg-blue-500/[0.02]">
-      <div className="card-body flex flex-col md:flex-row items-center justify-between gap-6 py-5">
-        <div className="flex items-center gap-4">
-          <div className="w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-            <Zap size={16} className="text-blue-500" />
-          </div>
-          <div>
-            <h3 className="text-[14px] font-bold text-white tracking-tight">Demo Controller</h3>
-            <p className="text-[11px] text-slate-500 font-medium">Quickly populate the vault with simulation data.</p>
-          </div>
-        </div>
-
-        <button
-          onClick={onPopulate}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-[13px] font-bold hover:bg-blue-500 transition-all active:scale-95"
+    <div
+      className="rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ background: 'var(--surface-3)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}
         >
           <Database size={14} />
-          Initialize Simulation
-        </button>
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Modo demostración</h3>
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            {isGuest
+              ? 'Inicia sesión para cargar datos de demostración en el vault.'
+              : 'Carga datos de ejemplo para explorar las analíticas del sistema.'
+            }
+          </p>
+        </div>
       </div>
+
+      <button
+        onClick={onPopulate}
+        disabled={isGuest}
+        className="btn-secondary text-sm flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        Inicializar demo
+      </button>
     </div>
   )
 }

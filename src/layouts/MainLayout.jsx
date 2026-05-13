@@ -2,18 +2,20 @@ import Navbar from '../components/Navbar'
 
 const MainLayout = ({ children, user, onLoginClick }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-black">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)' }}>
       <Navbar user={user} onLoginClick={onLoginClick} />
       <main className="flex-grow">
         {children}
       </main>
-      <footer className="border-t border-white/5 bg-black py-12 mt-20">
-        <div className="container mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[13px] text-slate-600 font-medium">
-          <p>© 2026 AI SECURE · Enterprise Identity Protection Platform</p>
-          <div className="flex items-center gap-8">
-            <span className="hover:text-white transition-colors cursor-pointer">Documentation</span>
-            <span className="hover:text-white transition-colors cursor-pointer">Security Standards</span>
-            <span className="hover:text-white transition-colors cursor-pointer">Support</span>
+      <footer style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }} className="py-8 mt-16">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            © 2026 AI Secure · Gestor de Contraseñas
+          </p>
+          <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--text-muted)' }}>
+            <span className="hover:underline cursor-pointer" style={{ color: 'var(--text-secondary)' }}>Documentación</span>
+            <span className="hover:underline cursor-pointer" style={{ color: 'var(--text-secondary)' }}>Seguridad</span>
+            <span className="hover:underline cursor-pointer" style={{ color: 'var(--text-secondary)' }}>Soporte</span>
           </div>
         </div>
       </footer>

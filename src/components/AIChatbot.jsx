@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Shield, Brain, Minimize2 } from 'lucide-react';
+import { MessageSquare, X, Send, Brain } from 'lucide-react';
 import { askCyberAI } from '../services/aiRecommendations';
 
 const AIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hello. I am the AI Secure Intelligence Assistant. How can I assist with your vault security today?' }
+    { role: 'assistant', content: 'Hola. Soy el asistente de seguridad. ¿En qué puedo ayudarte hoy?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,90 +30,135 @@ const AIChatbot = () => {
       const response = await askCyberAI(userMessage, messages.slice(-5));
       setMessages(prev => [...prev, { role: 'assistant', content: response }]);
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Uplink error. Please retry.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Error de conexión. Por favor, inténtalo de nuevo.' }]);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-[100] flex flex-col items-end">
-      {/* Chat Window */}
+    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+      {/* Ventana de chat */}
       {isOpen && (
-        <div className="mb-4 w-[380px] h-[500px] card-base flex flex-col shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-blue-500/20 animate-in slide-in-from-bottom-5 duration-300">
-          {/* Header */}
-          <div className="card-header bg-blue-600/5">
+        <div
+          className="mb-3 w-[360px] flex flex-col rounded-xl overflow-hidden"
+          style={{
+            height: '460px',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
+          }}
+        >
+          {/* Cabecera */}
+          <div
+            className="px-5 py-4 flex items-center justify-between"
+            style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface-2)' }}
+          >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                <Brain size={16} className="text-white" />
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: 'var(--accent)', color: '#fff' }}
+              >
+                <Brain size={15} />
               </div>
               <div>
-                <h3 className="text-[14px] font-bold text-white tracking-tight leading-none">Security Expert</h3>
-                <p className="text-[10px] text-blue-400 font-bold uppercase tracking-widest mt-1">AI Live Uplink</p>
+                <h3 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Asistente de seguridad</h3>
+                <p className="text-xs font-medium" style={{ color: 'var(--success)' }}>En línea</p>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-slate-500 hover:text-white transition-colors">
-              <Minimize2 size={16} />
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1.5 rounded-lg transition-colors"
+              style={{ color: 'var(--text-muted)' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-3)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <X size={15} />
             </button>
           </div>
 
-          {/* Messages Area */}
-          <div ref={scrollRef} className="flex-grow overflow-y-auto p-6 space-y-4 scrollbar-hide bg-black/40">
+          {/* Área de mensajes */}
+          <div ref={scrollRef} className="flex-grow overflow-y-auto p-4 space-y-3" style={{ background: 'var(--bg)' }}>
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] p-3.5 rounded-2xl text-[13px] leading-relaxed ${
-                  msg.role === 'user' 
-                    ? 'bg-blue-600 text-white rounded-tr-none' 
-                    : 'bg-white/[0.05] border border-white/[0.05] text-slate-300 rounded-tl-none'
-                }`}>
+                <div
+                  className="max-w-[85%] px-4 py-2.5 rounded-xl text-sm leading-relaxed"
+                  style={
+                    msg.role === 'user'
+                      ? { background: 'var(--accent)', color: '#fff', borderBottomRightRadius: '4px' }
+                      : { background: 'var(--surface)', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderBottomLeftRadius: '4px' }
+                  }
+                >
                   {msg.content}
                 </div>
               </div>
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white/[0.05] border border-white/[0.05] p-3.5 rounded-2xl rounded-tl-none">
-                  <div className="flex gap-1">
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div
+                  className="px-4 py-3 rounded-xl"
+                  style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+                >
+                  <div className="flex gap-1.5">
+                    {[0, 150, 300].map((delay) => (
+                      <div
+                        key={delay}
+                        className="w-1.5 h-1.5 rounded-full animate-bounce"
+                        style={{ background: 'var(--border-strong)', animationDelay: `${delay}ms` }}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input Area */}
-          <form onSubmit={handleSend} className="p-4 bg-white/[0.02] border-t border-white/[0.05] flex gap-2">
+          {/* Input */}
+          <form
+            onSubmit={handleSend}
+            className="px-4 py-3 flex gap-2"
+            style={{ borderTop: '1px solid var(--border)', background: 'var(--surface)' }}
+          >
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about encryption, entropy..."
-              className="flex-grow bg-black/40 border border-white/[0.05] rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-blue-500/50 transition-all"
+              placeholder="Pregunta sobre cifrado, entropía..."
+              className="flex-grow text-sm px-3 py-2 rounded-lg outline-none transition-colors"
+              style={{
+                background: 'var(--surface-3)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+              }}
+              onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border)'}
             />
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isLoading || !input.trim()}
-              className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white hover:bg-blue-500 transition-all disabled:opacity-50"
+              className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors disabled:opacity-40"
+              style={{ background: 'var(--accent)', color: '#fff' }}
+              onMouseEnter={e => !e.currentTarget.disabled && (e.currentTarget.style.background = 'var(--accent-hover)')}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--accent)'}
             >
-              <Send size={16} />
+              <Send size={14} />
             </button>
           </form>
         </div>
       )}
 
-      {/* Floating Toggle Button */}
+      {/* Botón flotante */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white transition-all duration-500 shadow-2xl active:scale-95 ${
-          isOpen ? 'bg-slate-800 rotate-90' : 'bg-blue-600 hover:bg-blue-500'
-        }`}
+        className="w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all active:scale-95"
+        style={{
+          background: isOpen ? 'var(--text-secondary)' : 'var(--accent)',
+          boxShadow: 'var(--shadow-md)',
+        }}
+        onMouseEnter={e => !isOpen && (e.currentTarget.style.background = 'var(--accent-hover)')}
+        onMouseLeave={e => e.currentTarget.style.background = isOpen ? 'var(--text-secondary)' : 'var(--accent)'}
       >
-        {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-        {!isOpen && (
-          <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#0a0a0a]" />
-        )}
+        {isOpen ? <X size={20} /> : <MessageSquare size={20} />}
       </button>
     </div>
   );

@@ -1,66 +1,81 @@
 import { Check, Activity, Info, AlertCircle } from 'lucide-react'
 
+const getScoreStyle = (score) => {
+  if (score >= 8) return { color: 'var(--success)', bg: 'var(--success-light)', border: '#b2f2bb', label: 'Fuerte' };
+  if (score >= 4) return { color: 'var(--warning)', bg: 'var(--warning-light)', border: '#ffd8a8', label: 'Media' };
+  return { color: 'var(--danger)', bg: 'var(--danger-light)', border: '#ffc9c9', label: 'Débil' };
+};
+
 const SecurityPanel = ({ analysis }) => {
   if (!analysis) {
     return (
-      <div className="card-base opacity-50">
+      <div className="card-base" style={{ opacity: 0.6 }}>
         <div className="card-header">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/[0.05] border border-white/10">
-              <Activity size={14} className="text-slate-500" />
+          <div className="flex items-center gap-2.5">
+            <div className="icon-box">
+              <Activity size={13} />
             </div>
-            <h2 className="text-[14px] font-bold text-white tracking-tight">Security Analysis</h2>
+            <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Análisis de seguridad</h2>
           </div>
         </div>
-        <div className="card-body flex items-center justify-center py-12">
-          <p className="text-[13px] text-slate-500">Waiting for generation...</p>
+        <div className="card-body flex items-center justify-center py-10">
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Genera una contraseña para ver el análisis</p>
         </div>
       </div>
     )
   }
 
+  const style = getScoreStyle(analysis.score);
+
   return (
     <div className="card-base">
       <div className="card-header">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/[0.05] border border-white/10">
-            <Activity size={14} className="text-slate-400" />
+        <div className="flex items-center gap-2.5">
+          <div className="icon-box">
+            <Activity size={13} />
           </div>
-          <h2 className="text-[14px] font-bold text-white tracking-tight">Security Analysis</h2>
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Análisis de seguridad</h2>
         </div>
-        <div className={`px-3 py-1 rounded-full text-[11px] font-bold border ${
-          analysis.score > 7 
-            ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
-            : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-        }`}>
-          Score: {analysis.score.toFixed(1)}
-        </div>
+        <span
+          className="text-xs font-semibold px-2.5 py-1 rounded-md"
+          style={{ background: style.bg, color: style.color, border: `1px solid ${style.border}` }}
+        >
+          {style.label} · {analysis.score.toFixed(1)}/10
+        </span>
       </div>
 
       <div className="card-body">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Main Metric */}
-          <div className="space-y-6">
-            <div className="p-5 rounded-xl bg-white/[0.02] border border-white/5 flex items-start gap-3">
-              <Info size={16} className="text-slate-500 mt-0.5 flex-shrink-0" />
-              <p className="text-[13px] text-slate-400 leading-relaxed">
-                {analysis.score > 8
-                  ? 'This credential meets high security requirements for enterprise environments.'
-                  : 'Consider increasing length or complexity to reach optimal entropy.'}
-              </p>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Mensaje de estado */}
+          <div
+            className="flex items-start gap-3 p-4 rounded-lg"
+            style={{ background: 'var(--surface-3)', border: '1px solid var(--border)' }}
+          >
+            <Info size={15} style={{ color: 'var(--text-muted)', marginTop: '1px', flexShrink: 0 }} />
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              {analysis.score >= 8
+                ? 'Esta contraseña cumple con los requisitos de alta seguridad para entornos empresariales.'
+                : 'Considera aumentar la longitud o la complejidad para alcanzar una entropía óptima.'}
+            </p>
           </div>
 
           {/* Checklist */}
-          <div className="grid grid-cols-1 gap-2">
+          <div className="space-y-2">
             {analysis.metrics.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-center justify-between px-4 py-3 rounded-xl border border-white/5 bg-black/40"
+                className="flex items-center justify-between px-4 py-2.5 rounded-lg"
+                style={{
+                  background: 'var(--surface-3)',
+                  border: '1px solid var(--border)',
+                }}
               >
-                <span className="text-[13px] font-medium text-slate-400">{item.label}</span>
-                <div className={item.ok ? 'text-blue-500' : 'text-slate-700'}>
-                  {item.ok ? <Check size={14} strokeWidth={3} /> : <AlertCircle size={14} />}
+                <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+                <div style={{ color: item.ok ? 'var(--success)' : 'var(--danger)' }}>
+                  {item.ok
+                    ? <Check size={14} strokeWidth={2.5} />
+                    : <AlertCircle size={14} />
+                  }
                 </div>
               </div>
             ))}

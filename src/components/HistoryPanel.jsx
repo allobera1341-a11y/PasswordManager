@@ -1,12 +1,17 @@
-import { History, Shield, Lock, Download, CloudOff } from 'lucide-react'
+import { History, Shield, Download, Cloud, CloudOff } from 'lucide-react'
 import { exportEncryptedHistory } from '../utils/exportUtils'
+
+const getLevelStyle = (level) => {
+  if (level === 'STRONG') return { color: 'var(--success)', bg: 'var(--success-light)', label: 'Fuerte' };
+  if (level === 'MEDIUM') return { color: 'var(--warning)', bg: 'var(--warning-light)', label: 'Media' };
+  return { color: 'var(--danger)', bg: 'var(--danger-light)', label: 'Débil' };
+};
 
 const HistoryPanel = ({ history, isGuest }) => {
   const formatTime = (createdAt) => {
-    if (!createdAt) return 'Pending...'
+    if (!createdAt) return 'Pendiente...'
     try {
-      const date = createdAt.toDate ? createdAt.toDate() : new Date(createdAt)
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      return new Date(createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
     } catch (e) {
       return '...'
     }
@@ -17,81 +22,100 @@ const HistoryPanel = ({ history, isGuest }) => {
   };
 
   return (
-    <div className="card-base flex flex-col h-full min-h-[500px] border-white/[0.05]">
+    <div className="card-base flex flex-col" style={{ minHeight: '480px' }}>
       <div className="card-header">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/[0.05] border border-white/10">
-            <History size={14} className="text-slate-400" />
+        <div className="flex items-center gap-2.5">
+          <div className="icon-box">
+            <History size={13} />
           </div>
-          <h2 className="text-[14px] font-bold text-white tracking-tight uppercase">Audit Trail</h2>
+          <h2 className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Registro de auditoría</h2>
         </div>
         {!isGuest && history.length > 0 && (
           <button
             onClick={handleExport}
-            className="text-[11px] font-bold text-slate-500 hover:text-white transition-colors flex items-center gap-2"
+            className="flex items-center gap-1.5 text-xs font-medium transition-colors"
+            style={{ color: 'var(--text-muted)' }}
+            onMouseEnter={e => e.currentTarget.style.color = 'var(--accent)'}
+            onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             <Download size={12} />
-            Export
+            Exportar
           </button>
         )}
       </div>
 
-      <div className="flex-grow overflow-y-auto bg-black/20">
+      <div className="flex-grow overflow-y-auto">
         {isGuest ? (
-          <div className="flex flex-col items-center justify-center py-32 px-10 text-center gap-6">
-            <div className="w-16 h-16 rounded-3xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
-              <CloudOff size={28} className="text-amber-500/50" />
+          <div className="flex flex-col items-center justify-center py-16 px-8 text-center gap-4">
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center"
+              style={{ background: 'var(--surface-3)', border: '1px solid var(--border)' }}
+            >
+              <CloudOff size={22} style={{ color: 'var(--text-muted)' }} />
             </div>
-            <div className="space-y-2">
-              <h4 className="text-[14px] font-bold text-white">Vault Sync Disabled</h4>
-              <p className="text-[12px] text-slate-500 font-medium leading-relaxed">
-                Connect your account to enable real-time cloud synchronization and session history.
+            <div>
+              <h4 className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Sincronización desactivada</h4>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                Inicia sesión para habilitar la sincronización en la nube y el historial de sesión.
               </p>
             </div>
           </div>
         ) : history.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 px-8 gap-4 opacity-30">
-            <Shield size={24} strokeWidth={1} className="text-slate-500" />
-            <p className="text-[12px] font-medium text-slate-500">No records in cloud vault</p>
+          <div className="flex flex-col items-center justify-center py-16 px-8 text-center gap-3">
+            <Shield size={22} strokeWidth={1.5} style={{ color: 'var(--border-strong)' }} />
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Sin registros en el vault</p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead className="sticky top-0 bg-[#0a0a0a] z-10 border-b border-white/[0.05]">
+          <table className="w-full text-left">
+            <thead style={{ borderBottom: '1px solid var(--border)', background: 'var(--surface-2)' }}>
               <tr>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">Timestamp</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] text-center">Security</th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] text-right">Metric</th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>Hora</th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-center" style={{ color: 'var(--text-muted)' }}>Nivel</th>
+                <th className="px-5 py-3 text-xs font-semibold uppercase tracking-wide text-right" style={{ color: 'var(--text-muted)' }}>Puntuación</th>
               </tr>
             </thead>
             <tbody>
-              {history.map((entry, idx) => (
-                <tr key={entry.id || idx} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
-                  <td className="px-6 py-4 text-[12px] font-medium text-slate-500 tabular-nums">
-                    {formatTime(entry.createdAt)}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={`inline-block w-2 h-2 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.4)] ${
-                      entry.securityLevel === 'STRONG' ? 'bg-blue-600' : 'bg-slate-700'
-                    }`} />
-                  </td>
-                  <td className="px-6 py-4 text-right text-[13px] font-bold text-white tabular-nums">
-                    {(entry.securityScore || 0).toFixed(1)}
-                  </td>
-                </tr>
-              ))}
+              {history.map((entry, idx) => {
+                const lvl = getLevelStyle(entry.securityLevel);
+                return (
+                  <tr
+                    key={entry.id || idx}
+                    style={{ borderBottom: '1px solid var(--border)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-2)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <td className="px-5 py-3 text-xs font-medium tabular-nums" style={{ color: 'var(--text-muted)' }}>
+                      {formatTime(entry.createdAt)}
+                    </td>
+                    <td className="px-5 py-3 text-center">
+                      <span
+                        className="inline-block text-xs font-semibold px-2 py-0.5 rounded-md"
+                        style={{ background: lvl.bg, color: lvl.color }}
+                      >
+                        {lvl.label}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-right text-sm font-bold tabular-nums" style={{ color: 'var(--text-primary)' }}>
+                      {(entry.securityScore || 0).toFixed(1)}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
       </div>
 
-      <div className="p-6 bg-white/[0.01] border-t border-white/[0.05]">
-        <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-slate-600">
-          <div className="flex items-center gap-2">
-            <div className={`w-1.5 h-1.5 rounded-full ${isGuest ? 'bg-amber-500/50' : 'bg-emerald-500 animate-pulse'}`} />
-            <span>{isGuest ? 'Local Identity' : 'Cloud Sync Active'}</span>
-          </div>
-          <span>{history.length} Entries</span>
+      {/* Footer del panel */}
+      <div className="px-5 py-3 flex items-center justify-between" style={{ borderTop: '1px solid var(--border)', background: 'var(--surface-2)' }}>
+        <div className="flex items-center gap-2 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
+          <div
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ background: isGuest ? 'var(--border-strong)' : 'var(--success)' }}
+          />
+          <span>{isGuest ? 'Sin sesión' : 'Sincronización activa'}</span>
         </div>
+        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{history.length} entradas</span>
       </div>
     </div>
   )

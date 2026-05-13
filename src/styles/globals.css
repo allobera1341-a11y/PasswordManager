@@ -1,113 +1,249 @@
+/* ─── Google Fonts ─── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  body {
-    background-color: #0a0a0a;
-    @apply text-slate-300 min-h-screen antialiased;
-    font-family: 'Inter', system-ui, sans-serif;
+  :root {
+    --bg:           #dfe2e8;
+    --surface:      #ffffff;
+    --surface-2:    #f8f9fa;
+    --surface-3:    #f1f3f5;
+    --border:       #d8dce2;
+    --border-strong:#b8bfc9;
+    --text-primary: #1a1d23;
+    --text-secondary:#495057;
+    --text-muted:   #868e96;
+    --accent:       #1c7ed6;
+    --accent-hover: #1971c2;
+    --accent-light: #e7f3ff;
+    --success:      #2f9e44;
+    --success-light:#ebfbee;
+    --warning:      #e67700;
+    --warning-light:#fff4e6;
+    --danger:       #c92a2a;
+    --danger-light: #fff5f5;
+    --shadow-sm:    0 1px 3px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md:    0 4px 16px rgba(0,0,0,0.13), 0 2px 6px rgba(0,0,0,0.08);
+    --shadow-lg:    0 8px 30px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.08);
   }
 
-  /* Simple range slider */
+  body {
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+    @apply min-h-screen antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+
   input[type="range"] {
-    @apply accent-blue-600;
+    accent-color: var(--accent);
+  }
+
+  * {
+    box-sizing: border-box;
   }
 }
 
 @layer components {
-  /* ─── Minimalist Surface ─── */
+  /* ─── Cards ─── */
   .card-base {
-    @apply bg-[#111] border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-300;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10), 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .card-base:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.13), 0 2px 6px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
   }
 
   .card-header {
-    @apply px-8 py-5 flex justify-between items-center border-b border-white/[0.05] bg-white/[0.02];
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--surface-2);
   }
 
   .card-body {
-    @apply p-8;
+    padding: 24px;
   }
 
-  /* ─── Clean Inputs ─── */
-  .surface-inset {
-    @apply bg-black border border-white/[0.05] rounded-xl;
-  }
-
+  /* ─── Metric blocks ─── */
   .metric-block {
-    @apply bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 transition-colors;
+    background-color: var(--surface-3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    transition: border-color 0.15s ease;
   }
 
   .metric-block:hover {
-    @apply border-white/[0.1] bg-white/[0.05];
+    border-color: var(--border-strong);
   }
 
-  /* ─── Professional Buttons ─── */
+  /* ─── Buttons ─── */
   .btn-primary {
-    @apply bg-white text-black font-semibold py-3 px-6 rounded-xl transition-all text-[14px] flex items-center justify-center gap-2 hover:bg-slate-200 active:scale-[0.98];
+    background-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-white/[0.05] border border-white/[0.1] text-white font-medium py-3 px-6 rounded-xl transition-all text-[14px] flex items-center justify-center gap-2 hover:bg-white/[0.1] active:scale-[0.98];
+    background-color: var(--surface);
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
-  /* ─── Typography ─── */
+  .btn-secondary:hover {
+    background-color: var(--surface-3);
+    border-color: var(--border-strong);
+  }
+
+  /* ─── Typography helpers ─── */
   .label-section {
-    @apply text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-2;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 8px;
   }
 
   .label-tech {
-    @apply text-[11px] font-medium text-slate-600 uppercase tracking-tight mb-2 block;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ─── Score badges ─── */
+  .badge-strong {
+    background-color: var(--success-light);
+    color: var(--success);
+    border: 1px solid #b2f2bb;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+
+  .badge-medium {
+    background-color: var(--warning-light);
+    color: var(--warning);
+    border: 1px solid #ffd8a8;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+
+  .badge-weak {
+    background-color: var(--danger-light);
+    color: var(--danger);
+    border: 1px solid #ffc9c9;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+  }
+
+  /* ─── Icon containers ─── */
+  .icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-3);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    flex-shrink: 0;
   }
 
   /* ─── Clean Scrollbar ─── */
-  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    @apply bg-white/10 rounded-full hover:bg-white/20;
+    background-color: var(--border-strong);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #adb5bd;
   }
 }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 0.4; }
-}
-
+/* ─── Keyframes ─── */
 @keyframes shrink {
   from { width: 100%; }
-  to { width: 0%; }
+  to   { width: 0%; }
 }
 
-/* ─── Login Animations ─── */
-@keyframes login-scan {
-  0%   { transform: translateY(0);    opacity: 0; }
-  15%  { opacity: 1; }
-  85%  { opacity: 1; }
-  100% { transform: translateY(500px); opacity: 0; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes login-fade-in {
+@keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-@keyframes login-slide-up {
-  from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0)   scale(1); }
-}
-
+/* ─── Login ─── */
 .login-backdrop {
-  animation: login-fade-in 0.5s ease forwards;
+  animation: fade-in 0.35s ease forwards;
 }
 
 .login-card-enter {
-  animation: login-slide-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: fade-up 0.4s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
 }
 
-.login-scanner {
-  animation: login-scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.google-btn {
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+/* ─── Toast ─── */
+.toast-enter {
+  animation: fade-up 0.3s ease forwards;
 }

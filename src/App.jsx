@@ -13,7 +13,7 @@ import { getAIRecommendations } from './services/aiRecommendations'
 import { validatePasswordConfig } from './utils/validation'
 import { validateVaultData } from './utils/integrityChecker'
 import { db, auth } from './firebase/firebase'
-import { ref, push, onValue, query, limitToLast, serverTimestamp } from 'firebase/database'
+import { ref, push, onValue, query, limitToLast } from 'firebase/database'
 import { onAuthStateChanged } from 'firebase/auth'
 
 function App() {
@@ -48,6 +48,47 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
+
+  // Sync offline queue
+  const syncOfflineQueue = useCallback(async () => {
+    if (!user || !db) return;
+    const queueKey = `offline_queue_${user.uid}`;
+    let queue = [];
+    try {
+      const parsed = JSON.parse(localStorage.getItem(queueKey));
+      if (Array.isArray(parsed)) queue = parsed;
+    } catch(e) {
+      // Ignorar si no es JSON válido
+    }
+    
+    if (queue.length === 0) return;
+
+    try {
+      const passwordsRef = ref(db, `users/${user.uid}/passwords`);
+      for (const item of queue) {
+        await push(passwordsRef, item);
+      }
+
+      localStorage.removeItem(queueKey);
+      setToast({ message: 'Sincronización completada: contraseñas pendientes subidas', type: 'success' });
+    } catch (err) {
+      console.error("Error al sincronizar cola offline:", err);
+    }
+  }, [user]);
+
+  // Sincronizar al iniciar sesión o recuperar conexión
+  useEffect(() => {
+    if (user) {
+      syncOfflineQueue();
+    }
+    
+    const handleOnline = () => {
+      if (user) syncOfflineQueue();
+    };
+    
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [user, syncOfflineQueue]);
 
   // Cargar historial — solo si el usuario está autenticado
   useEffect(() => {
@@ -91,21 +132,44 @@ function App() {
     // Solo guardar en la base de datos si el usuario está autenticado
     if (user && db) {
       setIsSaving(true);
+      
+      const newEntry = {
+        encryptedPassword: encryptPassword(newPass),
+        securityScore: newAnalysis.score,
+        securityLevel: newAnalysis.level,
+        entropy: newAnalysis.entropy,
+        analysisDetails: newAnalysis.metrics,
+        createdAt: Date.now() // Usamos hora local para persistencia offline
+      };
+
+      // Helper seguro para localStorage
+      const queueKey = `offline_queue_${user.uid}`;
+      const getSafeQueue = () => {
+        try {
+          const q = JSON.parse(localStorage.getItem(queueKey));
+          return Array.isArray(q) ? q : [];
+        } catch(e) {
+          return [];
+        }
+      };
+
+      // 1. Rollback System: Guardar en cola offline primero
+      const currentQueue = getSafeQueue();
+      currentQueue.push(newEntry);
+      localStorage.setItem(queueKey, JSON.stringify(currentQueue));
+
       try {
-        const encrypted = encryptPassword(newPass);
         const passwordsRef = ref(db, `users/${user.uid}/passwords`);
-        await push(passwordsRef, {
-          encryptedPassword: encrypted,
-          securityScore: newAnalysis.score,
-          securityLevel: newAnalysis.level,
-          entropy: newAnalysis.entropy,
-          analysisDetails: newAnalysis.metrics,
-          createdAt: serverTimestamp()
-        });
+        await push(passwordsRef, newEntry);
+        
+        // 2. Si sube bien, lo quitamos de la cola
+        const updatedQueue = getSafeQueue();
+        localStorage.setItem(queueKey, JSON.stringify(updatedQueue.filter(item => item.createdAt !== newEntry.createdAt)));
+        
         setToast({ message: 'Contraseña guardada en la nube', type: 'success' });
       } catch (error) {
-        console.error("Error al guardar:", error.message);
-        setToast({ message: 'Error al sincronizar. Los datos no se han guardado.', type: 'error' });
+        console.error("Error al guardar:", error);
+        setToast({ message: 'Error de red o permisos. Se intentará sincronizar más tarde.', type: 'error' });
       } finally {
         setIsSaving(false);
       }
@@ -149,7 +213,7 @@ function App() {
           securityScore: item.score,
           securityLevel: item.level,
           entropy: Math.floor(item.length * 5.2),
-          createdAt: serverTimestamp()
+          createdAt: Date.now() - Math.floor(Math.random() * 100000)
         });
       }
       setToast({ message: 'Datos de demo cargados correctamente', type: 'success' });

@@ -56,7 +56,7 @@ const SecurityInsights = ({ insights, isLoading }) => {
               Recomendaciones clave
             </h3>
             <ul className="space-y-2">
-              {insights.recommendations.map((tip, i) => (
+              {(insights.recommendations || []).map((tip, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
                   <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: 'var(--accent)' }} />
                   {tip}
@@ -72,7 +72,7 @@ const SecurityInsights = ({ insights, isLoading }) => {
               Estándares globales
             </h3>
             <ul className="space-y-2">
-              {insights.bestPractices.map((tip, i) => (
+              {(insights.bestPractices || []).map((tip, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: 'var(--text-muted)' }}>
                   <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: 'var(--border-strong)' }} />
                   {tip}

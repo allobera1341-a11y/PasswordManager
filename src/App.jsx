@@ -53,26 +53,36 @@ function App() {
   const syncOfflineQueue = useCallback(async () => {
     if (!user || !db) return;
     const queueKey = `offline_queue_${user.uid}`;
-    let queue = [];
-    try {
-      const parsed = JSON.parse(localStorage.getItem(queueKey));
-      if (Array.isArray(parsed)) queue = parsed;
-    } catch(e) {
-      // Ignorar si no es JSON válido
-    }
     
+    const getQueue = () => {
+      try {
+        const q = JSON.parse(localStorage.getItem(queueKey));
+        return Array.isArray(q) ? q : [];
+      } catch(e) {
+        return [];
+      }
+    };
+    
+    const queue = getQueue();
     if (queue.length === 0) return;
 
-    try {
-      const passwordsRef = ref(db, `users/${user.uid}/passwords`);
-      for (const item of queue) {
-        await push(passwordsRef, item);
-      }
+    const passwordsRef = ref(db, `users/${user.uid}/passwords`);
+    let synced = 0;
 
-      localStorage.removeItem(queueKey);
-      setToast({ message: 'Sincronización completada: contraseñas pendientes subidas', type: 'success' });
-    } catch (err) {
-      console.error("Error al sincronizar cola offline:", err);
+    for (const item of queue) {
+      try {
+        await push(passwordsRef, item);
+        synced++;
+      } catch (err) {
+        console.error("Error al sincronizar cola offline (Rollback):", err);
+      } finally {
+        const currentQueue = getQueue();
+        localStorage.setItem(queueKey, JSON.stringify(currentQueue.filter(qItem => qItem.createdAt !== item.createdAt)));
+      }
+    }
+
+    if (synced > 0) {
+      setToast({ message: `Sincronización completada: ${synced} contraseñas subidas`, type: 'success' });
     }
   }, [user]);
 
@@ -153,26 +163,31 @@ function App() {
         }
       };
 
-      // 1. Rollback System: Guardar en cola offline primero
+      // 1. Rollback System: Guardar en cola offline primero (Optimistic UI)
       const currentQueue = getSafeQueue();
       currentQueue.push(newEntry);
       localStorage.setItem(queueKey, JSON.stringify(currentQueue));
 
-      try {
-        const passwordsRef = ref(db, `users/${user.uid}/passwords`);
-        await push(passwordsRef, newEntry);
-        
-        // 2. Si sube bien, lo quitamos de la cola
-        const updatedQueue = getSafeQueue();
-        localStorage.setItem(queueKey, JSON.stringify(updatedQueue.filter(item => item.createdAt !== newEntry.createdAt)));
-        
-        setToast({ message: 'Contraseña guardada en la nube', type: 'success' });
-      } catch (error) {
-        console.error("Error al guardar:", error);
-        setToast({ message: 'Error de red o permisos. Se intentará sincronizar más tarde.', type: 'error' });
-      } finally {
-        setIsSaving(false);
-      }
+      const passwordsRef = ref(db, `users/${user.uid}/passwords`);
+      
+      // No bloqueamos la UI. Si hay conexión sube rápido, si no, se queda en cola local de Firebase
+      push(passwordsRef, newEntry)
+        .then(() => {
+          // 2. Si sube bien, lo quitamos de la cola persistente
+          const updatedQueue = getSafeQueue();
+          localStorage.setItem(queueKey, JSON.stringify(updatedQueue.filter(item => item.createdAt !== newEntry.createdAt)));
+          setToast({ message: 'Contraseña guardada en la nube', type: 'success' });
+        })
+        .catch((error) => {
+          console.error("Error al guardar:", error);
+          // 3. Rollback: Si hay un error de validación/permisos, revertimos la inserción local
+          const updatedQueue = getSafeQueue();
+          localStorage.setItem(queueKey, JSON.stringify(updatedQueue.filter(item => item.createdAt !== newEntry.createdAt)));
+          setToast({ message: 'Error al guardar. Permisos denegados (Rollback).', type: 'error' });
+        });
+
+      // Liberamos la UI inmediatamente para mejor experiencia
+      setIsSaving(false);
     }
 
     setIsAILoading(true);

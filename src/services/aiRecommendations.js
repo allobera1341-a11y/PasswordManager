@@ -43,7 +43,13 @@ export const getAIRecommendations = async (metrics) => {
       - Security Score: ${metrics.score}/10
       - Security Level: ${metrics.level}
       - Entropy: ${metrics.entropy} bits
-      Provide response in JSON format.
+      
+      You MUST respond ONLY with a valid JSON object matching this exact structure:
+      {
+        "explanation": "Brief explanation of the security metrics",
+        "recommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"],
+        "bestPractices": ["Practice 1", "Practice 2", "Practice 3"]
+      }
     `;
 
     const response = await fetch(endpoint, {
@@ -65,7 +71,22 @@ export const getAIRecommendations = async (metrics) => {
 
     if (!response.ok) throw new Error('CORS or API Error');
     const data = await response.json();
-    return isOpenAI ? JSON.parse(data.choices[0].message.content) : JSON.parse(data.candidates[0].content.parts[0].text);
+    
+    let rawText = isOpenAI 
+      ? data.choices[0].message.content 
+      : data.candidates[0].content.parts[0].text;
+      
+    // Clean up potential markdown formatting from Gemini
+    rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    
+    const parsed = JSON.parse(rawText);
+    
+    // Ensure all required fields exist to prevent UI crashes
+    return {
+      explanation: parsed.explanation || FALLBACK_ADVICE.explanation,
+      recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : FALLBACK_ADVICE.recommendations,
+      bestPractices: Array.isArray(parsed.bestPractices) ? parsed.bestPractices : FALLBACK_ADVICE.bestPractices
+    };
   } catch (error) {
     return FALLBACK_ADVICE;
   }

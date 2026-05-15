@@ -4,8 +4,7 @@ const SecurityStatus = () => {
   const statusItems = [
     { label: 'AES-256-GCM', active: true },
     { label: 'SSL/TLS', active: isSecure },
-    { label: 'Análisis local', active: true },
-    { label: 'Conocimiento cero', active: true },
+    { label: 'Análisis local', active: true }
   ];
 
   return (

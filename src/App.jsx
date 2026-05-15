@@ -208,34 +208,7 @@ function App() {
     }
   }, [config, user]);
 
-  const handlePopulateDemo = async () => {
-    if (!user) {
-      setToast({ message: 'Inicia sesión para usar el modo demo', type: 'error' });
-      return;
-    }
-    setToast({ message: 'Inicializando datos de demostración...', type: 'success' });
-    try {
-      const demoData = [
-        { score: 9.8, level: 'STRONG', length: 32 },
-        { score: 4.2, level: 'MEDIUM', length: 12 },
-        { score: 8.5, level: 'STRONG', length: 24 },
-        { score: 2.1, level: 'WEAK', length: 8 }
-      ];
-      for (const item of demoData) {
-        const p = generateSecurePassword({ length: item.length });
-        await push(ref(db, `users/${user.uid}/passwords`), {
-          encryptedPassword: encryptPassword(p),
-          securityScore: item.score,
-          securityLevel: item.level,
-          entropy: Math.floor(item.length * 5.2),
-          createdAt: Date.now() - Math.floor(Math.random() * 100000)
-        });
-      }
-      setToast({ message: 'Datos de demo cargados correctamente', type: 'success' });
-    } catch (err) {
-      setToast({ message: 'Error al cargar los datos de demo.', type: 'error' });
-    }
-  };
+
 
   // Pantalla de carga inicial mientras se verifica la sesión
   if (authLoading) {
@@ -262,7 +235,6 @@ function App() {
         aiInsights={aiInsights}
         config={config}
         setConfig={setConfig}
-        onPopulateDemo={handlePopulateDemo}
         isGuest={!user}
       />
 

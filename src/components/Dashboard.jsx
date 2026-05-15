@@ -5,19 +5,16 @@ import SecurityBadges from './SecurityBadges'
 import SecurityInsights from './SecurityInsights'
 import AnalyticsPanel from './AnalyticsPanel'
 import PasswordOptions from './PasswordOptions'
-import DemoMode from './DemoMode'
 
 const Dashboard = ({
   password, analysis, history, onGenerate,
   isSaving, isAILoading, aiInsights,
-  config, setConfig, onPopulateDemo, isGuest
+  config, setConfig, isGuest
 }) => {
   return (
     <section className="container mx-auto px-6 py-10 pb-24">
       <div className="max-w-7xl mx-auto space-y-8">
 
-        {/* Banner de demo */}
-        <DemoMode onPopulate={onPopulateDemo} isGuest={isGuest} />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 

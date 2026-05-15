@@ -10,7 +10,7 @@ const MainLayout = ({ children, user, onLoginClick }) => {
       <footer style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }} className="py-8 mt-16">
         <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            © 2026 AI Secure · Gestor de Contraseñas
+            © 2026 Password Manager · Gestor de Contraseñas
           </p>
           <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--text-muted)' }}>
             <span className="hover:underline cursor-pointer" style={{ color: 'var(--text-secondary)' }}>Documentación</span>

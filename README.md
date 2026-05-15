@@ -49,6 +49,5 @@ La aplicación estará disponible en `http://localhost:5173`.
 - **Generación Inteligente:** Pools de entropía con modos: Standard, High y Maximum.
 - **Auditoría en Tiempo Real:** Sincronización en vivo con Firebase y analíticas de sesión.
 - **AI Insights:** Recomendaciones proactivas basadas en métricas criptográficas.
-- **Modo Presentación:** Incluye un "Demo Controller" para cargar datos simulados rápidamente durante la exposición.
 
 ---

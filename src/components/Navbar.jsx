@@ -19,7 +19,10 @@ const Navbar = ({ user, onLoginClick }) => {
       <div className="container mx-auto px-6 h-14 flex items-center justify-between">
 
         {/* Marca */}
-        <div className="flex items-center gap-2.5">
+        <div 
+          className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{ background: 'var(--accent)' }}
@@ -27,14 +30,9 @@ const Navbar = ({ user, onLoginClick }) => {
             <Shield size={15} className="text-white" strokeWidth={2.5} />
           </div>
           <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
-            AI Secure
+            Password Manager
           </span>
-          <span
-            className="text-xs font-medium px-1.5 py-0.5 rounded"
-            style={{ background: 'var(--surface-3)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}
-          >
-            v5.0
-          </span>
+
         </div>
 
         {/* Acciones */}

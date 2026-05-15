@@ -5,23 +5,23 @@
 
 const FALLBACK_ADVICE = {
   recommendations: [
-    "Implement high-entropy salt for local hashing.",
-    "Enable hardware-based MFA (FIDO2) for this account.",
-    "Verify credential integrity against known breach databases."
+    "Implementar un salt de alta entropía para el hashing local.",
+    "Habilitar MFA basado en hardware (FIDO2) para esta cuenta.",
+    "Verificar la integridad de las credenciales contra bases de datos de brechas conocidas."
   ],
-  explanation: "Analysis suggests optimal character distribution and high complexity. No common patterns detected in the abstract bitstream.",
+  explanation: "El análisis sugiere una distribución de caracteres óptima y alta complejidad. No se detectaron patrones comunes en el flujo de bits abstracto.",
   bestPractices: [
-    "Perform periodic vault rotations.",
-    "Use distinct identities for sensitive infrastructure.",
-    "Maintain local-only decryption keys."
+    "Realizar rotaciones periódicas de la bóveda.",
+    "Usar identidades distintas para infraestructura sensible.",
+    "Mantener claves de descifrado exclusivamente locales."
   ]
 };
 
 const SMART_MOCKS = [
-  { keywords: ['aes', 'cifrado', 'encrypt'], response: "Our vault utilizes AES-256-GCM. Unlike standard CBC mode, GCM provides both confidentiality and authenticity, ensuring that even if an attacker modifies the encrypted data, the system will detect it." },
-  { keywords: ['entropy', 'entropia', 'bits'], response: "Entropy measures the unpredictability of your password in bits. A score of 128 bits is considered virtually unbreakable by current classical computing standards." },
-  { keywords: ['zero', 'conocimiento', 'privacidad'], response: "Zero-Knowledge architecture means the encryption keys never leave your browser. Even if our database was compromised, your passwords remain unreadable." },
-  { keywords: ['ia', 'ai', 'chatbot'], response: "I am an intelligence layer designed to assist with security metadata. I never see your actual passwords, only the abstract metrics provided by the local analyzer." }
+  { keywords: ['aes', 'cifrado', 'encrypt'], response: "Nuestra bóveda utiliza AES-256-GCM. A diferencia del modo CBC estándar, GCM proporciona confidencialidad y autenticidad, asegurando que incluso si un atacante modifica los datos encriptados, el sistema lo detectará." },
+  { keywords: ['entropy', 'entropia', 'bits'], response: "La entropía mide la imprevisibilidad de su contraseña en bits. Una puntuación de 128 bits se considera virtualmente irrompible según los estándares de computación clásica actuales." },
+  { keywords: ['zero', 'conocimiento', 'privacidad'], response: "La arquitectura de Conocimiento Cero significa que las claves de encriptación nunca salen de su navegador. Incluso si nuestra base de datos se viera comprometida, sus contraseñas seguirían siendo ilegibles." },
+  { keywords: ['ia', 'ai', 'chatbot'], response: "Soy una capa de inteligencia diseñada para ayudar con los metadatos de seguridad. Nunca veo sus contraseñas reales, solo las métricas abstractas proporcionadas por el analizador local." }
 ];
 
 export const getAIRecommendations = async (metrics) => {
@@ -39,16 +39,16 @@ export const getAIRecommendations = async (metrics) => {
       : `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const prompt = `
-      You are a high-end Cybersecurity Assistant. Generate professional security insights based on these ABSTRACT metrics:
-      - Security Score: ${metrics.score}/10
-      - Security Level: ${metrics.level}
-      - Entropy: ${metrics.entropy} bits
+      Eres un Asistente de Ciberseguridad de alto nivel. Genera información de seguridad profesional basada en estas métricas ABSTRACTAS:
+      - Puntuación de Seguridad: ${metrics.score}/10
+      - Nivel de Seguridad: ${metrics.level}
+      - Entropía: ${metrics.entropy} bits
       
-      You MUST respond ONLY with a valid JSON object matching this exact structure:
+      DEBES responder ÚNICAMENTE con un objeto JSON válido que coincida con esta estructura exacta y todo el contenido DEBE ESTAR EN ESPAÑOL:
       {
-        "explanation": "Brief explanation of the security metrics",
-        "recommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"],
-        "bestPractices": ["Practice 1", "Practice 2", "Practice 3"]
+        "explanation": "Breve explicación de las métricas de seguridad",
+        "recommendations": ["Recomendación 1", "Recomendación 2", "Recomendación 3"],
+        "bestPractices": ["Práctica 1", "Práctica 2", "Práctica 3"]
       }
     `;
 
@@ -100,7 +100,7 @@ export const askCyberAI = async (message, chatHistory = []) => {
   if (!apiKey || apiKey.includes('YOUR_')) {
     const match = SMART_MOCKS.find(m => m.keywords.some(k => userMsg.includes(k)));
     if (match) return match.response;
-    return "I am operating in secure local mode. I can assist you with technical details about AES-256, Entropy calculations, or our Zero-Knowledge architecture. What would you like to know?";
+    return "Estoy operando en modo local seguro. Puedo ayudarle con detalles técnicos sobre AES-256, cálculos de Entropía o nuestra arquitectura de Conocimiento Cero. ¿Qué le gustaría saber?";
   }
 
   try {
@@ -121,7 +121,7 @@ export const askCyberAI = async (message, chatHistory = []) => {
           ? {
               model: "gpt-4o-mini",
               messages: [
-                { role: "system", content: "You are an expert Cybersecurity Assistant." },
+                { role: "system", content: "Eres un Asistente experto en Ciberseguridad. Responde siempre en español." },
                 { role: "user", content: message }
               ]
             }
@@ -140,6 +140,6 @@ export const askCyberAI = async (message, chatHistory = []) => {
     const match = SMART_MOCKS.find(m => m.keywords.some(k => userMsg.includes(k)));
     if (match) return match.response;
     
-    return "I am operating in secure local mode. I can assist you with technical details about AES-256, Entropy calculations, or our Zero-Knowledge architecture. What would you like to know?";
+    return "Estoy operando en modo local seguro. Puedo ayudarle con detalles técnicos sobre AES-256, cálculos de Entropía o nuestra arquitectura de Conocimiento Cero. ¿Qué le gustaría saber?";
   }
 };
